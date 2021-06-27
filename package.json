@@ -1,0 +1,11 @@
+{
+  "name": "duckumentation",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server/app.js",
+    "dev:server": "nodemon server/app.js",
+    "dev:client": "cd client && npm start",
+    "postinstall": "cd server && npm install && cd ../client && npm install"
+  }
+}
