@@ -1,0 +1,10 @@
+/* Aurora overrides swagger css, fix found issues here */
+
+.swagger-ui pre {
+    background-color: transparent;
+    border: none;
+}
+
+.swagger-ui button {
+    box-shadow: none;
+}

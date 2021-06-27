@@ -1,70 +1,95 @@
-# Getting Started with Create React App
+# Duckumentation :duck:
+Konglig Datasektionens API-specifikationer
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Hantera API:er
+## Lägga till API-specifikationer
+För att lägga till en API-specifikation måste ändringar göras både i frontend och backend. Utöver detta måste du också redigera API-specifikationsfilen för dockumentation :100: Denna finns under `server/specifications/duckumentation.yml`.
 
-## Available Scripts
+### Backend
+1. Lägg till OpenAPI-specifikationsfilen i `server/specifications`.
+2. I `server/app.js`, gör fäljande:
+    - Ladda in filen och servera på en endpoint:
+    **YML**:
+        ```js
+        const name = fs.readFileSync("./specifications/name.yml")
+        app.get("/api/apipath", (req, res) => res.send(name.toString()))
+        ```
+        **JSON**:
+        ```js
+        const name = JSON.parse(fs.readFileSync("./specifications/name.json"))
+        app.get("/api/apipath", (req, res) => res.json(name))
+        ```
 
-In the project directory, you can run:
+### Frontend
+I `client/src/App.js`, gör fäljande:
+- Lägg till ett objekt i `links`-arrayen:
+    ```js
+    { label: "Label", to: "/path" }
+    ```
+    
+- Lägg till en `Route` i `Switch`-elementet:
+    ```js
+    <Route exact path="/path">
+        <Header title="Label" />
+        <SwaggerUI url={url("/api/apipath")} />
+    </Route>
+    ```
+    - `path` ska här vara densamma som i `to`-värdet föregående steg.
+    - `url("/api/apipath")` ska vara den path:en som definierades på backenden.
+    - Var noga med att **inte** placera `Route`-elementet efter det sista `Route`-elementet. Placerar du den efter kommer du omdirigeras till startsidan.
 
-### `npm start`
+## Redigera API-specifikation
+Redigera specifikationsfilen du vill ändra och gör en PR. Specifikationsfilerna ligger under `server/specifications`.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+# Miljövariabler (environment variables)
+### Klient
+Redigera `.env-development`-fil under `client/` för att definiera miljövariabler.
+| Namn | Standardvärde | Beskrivning |
+|----- | ------------- | ----------- |
+| REACT_APP_BASE_URL | http://localhost:5000 | Path till backenden |
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### Server
+Skapa en `.env`-fil under `server/` för att definiera miljövariabler.
+| Namn | Standardvärde | Beskrivning |
+|----- | ------------- | ----------- |
+| NODE_ENV | development | - |
+| PORT | 5000 | - |
 
-### `npm test`
+# Systemberoenden och Pls-permission
+Detta system beror inte på något annat system. Detta system har inga pls-permissions.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# Köra programmet
+## Lokalt
+1. Klona detta repo
+2. Installera dependencies
+    - Under `client/`, kör:
+    `npm install`
+    - Under `server/`, kör:
+    `npm install`
+3. Kör frontend
+    - Under `client/`, kör:
+    `npm start`
+    frontenden serveras på http://localhost:3000
+3. Kör backend
+    - Under `server/`, kör:
+    `npm run dev`
+    backenden serveras på http://localhost:5000
 
-### `npm run build`
+## Produktion
+1. Klona detta repo
+2. Installera dependencies
+    - Under `client/`, kör:
+    `npm install`
+    - Under `server/`, kör:
+    `npm install`
+3. Bygg frontend
+    - Under `client/`, kör:
+    `npm run build`
+3. Kör backend
+    - Under `server/`, kör:
+    `npm start`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Backenden serveras på port 5000 om inget annat är angett.
+Frontenden serveras på `/`, API:et på `/api/...`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

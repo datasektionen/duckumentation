@@ -1,0 +1,34 @@
+openapi: 3.0.0
+servers: 
+  - url: https://duckumentation.datasektionen.se
+info:
+  description: This is the API spec for the backend of this website :) Much meta many wow
+  version: 1.0.0
+  title: Duckumentation API
+  contact:
+    email: d-sys@d.kth.se
+paths:
+  /api/duckumentation:
+    get:
+      tags:
+        - APIer
+      summary: hämta denna API-specifikation
+      responses:
+        '200':
+          description: OK
+  /api/nallen:
+    get:
+      tags:
+        - APIer
+      summary: hämta API-specifikationen för nAllen
+      responses:
+        '200':
+          description: OK
+  /api/spam2:
+    get:
+      tags:
+        - APIer
+      summary: hämta API-specifikationen för spam2
+      responses:
+        '200':
+          description: OK

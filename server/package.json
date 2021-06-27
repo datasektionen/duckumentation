@@ -1,0 +1,23 @@
+{
+    "name": "duckumentation-server",
+    "version": "1.0.0",
+    "private": true,
+    "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+    },
+    "type": "module",
+    "dependencies": {
+        "cors": "^2.8.5",
+        "dotenv": "^10.0.0",
+        "express": "^4.17.1",
+        "morgan": "^1.10.0",
+        "path": "^0.12.7"
+    },
+    "scripts": {
+        "start": "node app.js",
+        "dev": "nodemon app.js"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.7"
+    }
+}
