@@ -11,12 +11,13 @@ För att lägga till en API-specifikation måste ändringar göras både i front
     - Ladda in filen och servera på en endpoint:
     **YML**:
         ```js
-        const name = fs.readFileSync("./specifications/name.yml")
+        const name = fs.readFileSync(path.resolve(__dirname + "/specifications/name.yml"))
         app.get("/api/apipath", (req, res) => res.send(name.toString()))
         ```
         **JSON**:
         ```js
         const name = JSON.parse(fs.readFileSync("./specifications/name.json"))
+        const name = JSON.parse(fs.readFileSync(path.resolve(__dirname + "/specifications/name.json")))
         app.get("/api/apipath", (req, res) => res.json(name))
         ```
 

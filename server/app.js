@@ -16,16 +16,19 @@ app.use(express.json())
 if (configuration.NODE_ENV === "development") app.use(morgan('dev'))
 else app.use(morgan("common"))
 
-const duckumentation = fs.readFileSync("./specifications/duckumentation.yml")
+const duckumentation = fs.readFileSync(path.resolve(__dirname + "/specifications/duckumentation.yml"))
 app.get("/api/duckumentation", (req, res) => res.send(duckumentation.toString()))
-const nallen = fs.readFileSync("./specifications/nallen.yml")
+
+const nallen = fs.readFileSync(path.resolve(__dirname + "/specifications/nallen.yml"))
 app.get("/api/nallen", (req, res) => res.send(nallen.toString()))
+
 const spam2 = ""
 app.get("/api/spam2", (req, res) => res.send(spam2))
+
 // Insert new API endpoints above this line
 app.get("/api/*", (req, res) => res.send("Invalid API path"))
 
 app.use('/', express.static('../client/build'))
-app.get('*', (req, res) => res.sendFile(path.resolve(__dirname+ "/../client/build/index.html")))
+app.get('*', (req, res) => res.sendFile(path.resolve(__dirname + "/../client/build/index.html")))
 const PORT = configuration.PORT
 app.listen(PORT, () => console.log(`Listening on port ${PORT}!`))
