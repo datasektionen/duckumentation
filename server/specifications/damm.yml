@@ -1,8 +1,14 @@
 openapi: 3.0.0
-servers: 
-  - url: https://damm.datasektionen.se
+servers:
+  - url: http://damm.datasektionen.se
+    description: Production server
+  - url: http://localhost:8080
+    description: Local development
 info:
-  description: API-specifikation för damm, Konglig Datasektionens historiesystem
+  description: |
+    API-specifikation för damm, Konglig Datasektionens historiesystem.
+
+    Auktorisera med token du får från login.
   version: 2.0.0
   title: damm API
   contact:
@@ -44,6 +50,32 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  emails:
+                    type: string
+                    example: example@kth.se
+                  first_name:
+                    type: string
+                    example: Ture
+                  last_name:
+                    type: string
+                    example: Teknolog
+                  ugkthid:
+                    type: string
+                    example: u1xxxxxx
+                  user:
+                    type: string
+                    example: xxxxx
+                  admin:
+                    type: array
+                    items:
+                      type: string
+                      example: [admin]
+                  
         '404':
           description: The token was not a valid token
 
@@ -598,6 +630,10 @@ paths:
           description: Unauthorized
       
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
   schemas:
     Patch:
       type: object
