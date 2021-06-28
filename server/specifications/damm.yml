@@ -1,0 +1,698 @@
+openapi: 3.0.0
+servers: 
+  - url: https://damm.datasektionen.se
+info:
+  description: API-specifikation för damm, Konglig Datasektionens historiesystem
+  version: 2.0.0
+  title: damm API
+  contact:
+    email: d-sys@d.kth.se
+tags:
+  - name: Misc
+    description: Miscellaneous endpoints
+security: 
+  - BearerAuth: []
+paths:
+  /api/ping:
+    get:
+      tags:
+        - Misc
+      summary: ping damm
+      description: |
+        Pings damm
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+                  body:
+                    type: string
+                    example: pong
+  /api/check-token:
+    get:
+      tags:
+        - Misc
+      summary: checks the validity of a token and its pls accesses.
+      description: |
+        Always returns 200 if a token is a valid token. If the token has no pls accesses, 200 is also returned.
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: The token was not a valid token
+
+  /api/patches/all:
+    get:
+      tags:
+        - Patches
+      summary: get all patches
+      description: |
+        Gets all patches in the database. If token with admin or prylis access is provided,
+        the "files" field is also included in the response on patches that have attached files.
+      responses:
+        '200':
+          description: A list of all patches.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+                  body:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Patch'
+  /api/patches/create:
+    post:
+      tags:
+        - Patches
+      summary: create a patch
+      description: |
+        Creates a patch. The image must be uploaded before posting this endpoint
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                date:
+                  type: string
+                  pattern: ^\d{4}-d{2}-d{2}$
+                  example: '1983-10-07'
+                tags:
+                  type: array
+                  items:
+                    type: integer
+                creators:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '201':
+          description: Patch was created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 201
+                  body:
+                    $ref: '#/components/schemas/Patch'
+        '401':
+          description: Unauthorized
+  /api/patches/update:
+    put:
+      tags:
+        - Patches
+      summary: update a patch
+      description: |
+        Only include fields you want to update.
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              required:
+                - patchId
+              properties:
+                patchId:
+                  type: integer
+                name:
+                  type: string
+                description:
+                  type: string
+                date:
+                  type: string
+                  pattern: ^\d{4}-d{2}-d{2}$
+                  example: '1983-10-07'
+                tags:
+                  type: array
+                  items:
+                    type: integer
+                creators:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Patch was updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+                  body:
+                    $ref: '#/components/schemas/Patch'
+        '401':
+          description: Unauthorized
+
+  /api/tags/all:
+    get:
+      tags:
+        - Tags
+      summary: get all tags
+      description: |
+        Gets all tags in the database
+      responses:
+        '200':
+          description: A list of all tags.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+                  body:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tag'
+  /api/tags/create:
+    post:
+      tags:
+        - Tags
+      summary: create a tag
+      description: |
+        Creates a tag. If creating a child tag, include parent's id in the 'parent' field.
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                color:
+                  type: string
+                  example: '#ffffff'
+                backgroundColor:
+                  type: string
+                  example: '#000000'
+                parent:
+                  type: integer
+      responses:
+        '201':
+          description: Tag was created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 201
+                  body:
+                    $ref: '#/components/schemas/Tag'
+        '401':
+          description: Unauthorized
+  /api/tags/update:
+    put:
+      tags:
+        - Tags
+      summary: update a tag
+      description: |
+        Only include fields you want to update.
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                description:
+                  type: string
+                color:
+                  type: string
+                  example: '#ffffff'
+                backgroundColor:
+                  type: string
+                  example: '#000000'
+      responses:
+        '200':
+          description: Tag was updated
+        '401':
+          description: Unauthorized
+  /api/tags/{id}:
+    delete:
+      tags:
+        - Tags
+      summary: delete a tag
+      description: |
+        Deletes the tag
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tag was deleted
+        '401':
+          description: Unauthorized
+
+  /api/events/all:
+    get:
+      tags:
+        - Events
+      summary: get all events
+      description: |
+        Gets all events in the database. Also gets the dfunkt events from dfunkt.
+      responses:
+        '200':
+          description: A list of all events.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+                  body:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Event'
+  /api/events/create:
+    post:
+      tags:
+        - Events
+      summary: create an event
+      description: |
+        Creates an event. The protocol field is only required if type is SM_DM
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/Event'
+      responses:
+        '201':
+          description: Event was created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 201
+                  body:
+                    $ref: '#/components/schemas/Event'
+        '401':
+          description: Unauthorized
+  /api/events/update:
+    put:
+      tags:
+        - Events
+      summary: update an event
+      description: |
+        Only include fields you want to update.
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                content:
+                  type: string
+                date:
+                  type: string
+                  pattern: ^\d{4}-d{2}-d{2}$
+                  example: '1983-10-07'
+                type:
+                  type: string
+                  enum:
+                    - SM_DM
+                    - GENERAL
+                    - ANNIVERSARY
+                protocol:
+                  type: string
+                  format: hostname
+                  example: https://dsekt-assets.s3.amazonaws.com/protokoll/glogg_sm17
+      responses:
+        '200':
+          description: Event was updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+                  body:
+                    $ref: '#/components/schemas/Event'
+        '401':
+          description: Unauthorized
+  /api/events/{id}:
+    delete:
+      tags:
+        - Events
+      summary: delete an event
+      description: |
+        Deletes the event
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Event was deleted
+        '401':
+          description: Unauthorized
+
+  /api/files/upload/patch-image:
+    post:
+      tags:
+        - Files
+      summary: upload an image to AWS S3
+      description: |
+        Uploads the image to AWS S3. 
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Image was uploaded. First item in array is the uncompressed image. The second item is the compressed image.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 201
+                  body:
+                    type: array
+                    items:
+                      properties:
+                        Bucket:
+                          type: string
+                        Location:
+                          type: string
+                        Key:
+                          type: string
+                        ContentType:
+                          type: string
+        '401':
+          description: Unauthorized
+  /api/files/attach/img-to-patch:
+    post:
+      tags:
+        - Files
+      summary: attach images to a patch
+      description: |
+        Attach image urls (S3 images) to a patch. Replaces the current images of a patch. NOTE: does not remove the files from S3
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - patchId
+                - images
+              properties:
+                patchId:
+                  type: integer
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: hostname
+                    example: https://datasektionen.se/static/media/skold.21209560.svg
+      responses:
+        '200':
+          description: Images were attached and replaced the previous ones.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+        '401':
+          description: Unauthorized
+  /api/files/upload/patch-file:
+    post:
+      tags:
+        - Files
+      summary: upload a file to S3
+      description: |
+        Uploads the image to AWS S3.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: File was uploaded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 201
+                  body:
+                    type: array
+                    items:
+                      properties:
+                        Bucket:
+                          type: string
+                        Location:
+                          type: string
+                        Key:
+                          type: string
+                        ContentType:
+                          type: string
+        '401':
+          description: Unauthorized
+  /api/files/attach/file-to-patch:
+    post:
+      tags:
+        - Files
+      summary: attach a file to a patch
+      description: |
+        Attach a file url (S3 files) to a patch. Pushes to the files array of the Patch.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - patchId
+                - file
+              properties:
+                patchId:
+                  type: integer
+                file:
+                  type: string
+                  format: hostname
+                  example: https://dsekt-assets.s3.amazonaws.com/protokoll/glogg_sm17
+      responses:
+        '200':
+          description: File was attached.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 200
+        '401':
+          description: Unauthorized
+  /api/files/get/{name}:
+    post:
+      tags:
+        - Files
+      summary: get a file that is attached to a patch
+      description: |
+        Gets a patch file. Since patch files require auth, the server uses the provided token and downloads the file
+        if the token has access.
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+  /api/files/patch-file:
+    delete:
+      tags:
+        - Files
+      summary: delete a file that is attached to a patch
+      description: |
+        Deletes a patch file from S3 and the patch object.
+      parameters:
+        - in: query
+          name: name
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: patchId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: File doesn't exist
+        '401':
+          description: Unauthorized
+      
+components:
+  schemas:
+    Patch:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        date:
+          type: string
+          pattern: ^\d{4}-d{2}-d{2}$
+          example: '1983-10-07'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        creators:
+          type: array
+          items:
+            type: string
+          example: [Ture Teknolog]
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+        images:
+          type: array
+          items:
+            type: string
+          example: [https://datasektionen.se/static/media/skold.21209560.svg]
+        files:
+          type: array
+          items:
+            type: string
+    Tag:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        color:
+          type: string
+          example: '#ffffff'
+        backgroundColor:
+          type: string
+          example: '#000000'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+    Event:
+      type: object
+      required:
+        - id
+        - name
+        - content
+        - date
+        - type
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        date:
+          type: string
+          pattern: ^\d{4}-d{2}-d{2}$
+          example: '1983-10-07'
+        type:
+          type: string
+          enum:
+            - SM_DM
+            - GENERAL
+            - ANNIVERSARY
+        protocol:
+          type: string
+          format: hostname
+          example: https://dsekt-assets.s3.amazonaws.com/protokoll/glogg_sm17

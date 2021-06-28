@@ -22,6 +22,9 @@ app.get("/api/duckumentation", (req, res) => res.send(duckumentation.toString())
 const nallen = fs.readFileSync(path.resolve(__dirname + "/specifications/nallen.yml"))
 app.get("/api/nallen", (req, res) => res.send(nallen.toString()))
 
+const damm = fs.readFileSync(path.resolve(__dirname + "/specifications/damm.yml"))
+app.get("/api/damm", (req, res) => res.send(damm.toString()))
+
 const spam2 = ""
 app.get("/api/spam2", (req, res) => res.send(spam2))
 

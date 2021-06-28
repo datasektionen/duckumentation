@@ -25,6 +25,11 @@ const App = () => {
             api: "/api/nallen",
         },
         {
+            label: "damm",
+            to: "/damm",
+            api: "/api/damm",
+        },
+        {
             label: "spam2",
             to: "/spam2",
             api: "/api/spam2",
