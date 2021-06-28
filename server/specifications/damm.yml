@@ -1,6 +1,6 @@
 openapi: 3.0.0
 servers:
-  - url: http://damm.datasektionen.se
+  - url: https://damm.datasektionen.se
     description: Production server
   - url: http://localhost:8080
     description: Local development
