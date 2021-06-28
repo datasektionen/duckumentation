@@ -17,14 +17,17 @@ const App = () => {
         {
             label: "Duckumentation",
             to: "/duckumentation",
+            api: "/api/duckumentation",
         },
         {
-            label: "Nallen",
+            label: "nAllen",
             to: "/nallen",
+            api: "/api/nallen",
         },
         {
-            label: "Spam2",
+            label: "spam2",
             to: "/spam2",
+            api: "/api/spam2",
         },
     ]
 
@@ -39,7 +42,7 @@ const App = () => {
             />
             <Switch>
                 <Route exact path="/">
-                    <Header title="API-specifikationer" />
+                    <Header title="API-specifikationer 🦆" />
                     <div id="content">
                         <p>
                             På denna sida finns Konglig Datasektionens API-specifikationer (de system som någon orkat skriva en OpenAPI-specifikation för). Saknar du något system på denna sida? Vill du bidra? Skriv en specifikation för ett nuvarande system.
@@ -54,18 +57,13 @@ const App = () => {
                         </ul>
                     </div>
                 </Route>
-                <Route exact path="/duckumentation">
-                    <Header title="Duckumentation" />
-                    <SwaggerUI url={url("/api/duckumentation")} />
-                </Route>
-                <Route exact path="/nallen">
-                    <Header title="nAllen" />
-                    <SwaggerUI url={url("/api/nallen")} />
-                </Route>
-                <Route exact path="/spam2">
-                    <Header title="spam2" />
-                    <SwaggerUI url={url("/api/spam2")} />
-                </Route>
+                {links.filter(x => x.api).map((l, i) =>
+                    <Route exact path={l.to} key={"route-"+l.to}>
+                        <Header title={l.label} />
+                        <SwaggerUI url={url(l.api)} />
+                    </Route>
+                )}
+                {/* 404, redirect to home */}
                 <Route>
                     <Redirect to="/" />
                 </Route>

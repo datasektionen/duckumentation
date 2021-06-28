@@ -3,13 +3,13 @@ Konglig Datasektionens API-specifikationer
 
 # Hantera API:er
 ## Lägga till API-specifikationer
-För att lägga till en API-specifikation måste ändringar göras både i frontend och backend. Utöver detta måste du också redigera API-specifikationsfilen för dockumentation :100: Denna finns under `server/specifications/duckumentation.yml`.
+För att lägga till en API-specifikation måste ändringar göras både i frontend och backend. Utöver detta måste du också redigera API-specifikationsfilen för duckumentation :100: Denna finns under `server/specifications/duckumentation.yml`.
 
 ### Backend
 1. Lägg till OpenAPI-specifikationsfilen i `server/specifications`.
 2. I `server/app.js`, gör fäljande:
     - Ladda in filen och servera på en endpoint:
-    **YML**:
+        **YML**:
         ```js
         const name = fs.readFileSync(path.resolve(__dirname + "/specifications/name.yml"))
         app.get("/api/apipath", (req, res) => res.send(name.toString()))
@@ -25,19 +25,10 @@ För att lägga till en API-specifikation måste ändringar göras både i front
 I `client/src/App.js`, gör fäljande:
 - Lägg till ett objekt i `links`-arrayen:
     ```js
-    { label: "Label", to: "/path" }
+    { label: "Label", to: "/path", api: "/api/apipath" }
     ```
-    
-- Lägg till en `Route` i `Switch`-elementet:
-    ```js
-    <Route exact path="/path">
-        <Header title="Label" />
-        <SwaggerUI url={url("/api/apipath")} />
-    </Route>
-    ```
-    - `path` ska här vara densamma som i `to`-värdet föregående steg.
-    - `url("/api/apipath")` ska vara den path:en som definierades på backenden.
-    - Var noga med att **inte** placera `Route`-elementet efter det sista `Route`-elementet. Placerar du den efter kommer du omdirigeras till startsidan.
+    - `/api/apipath` ska vara den path:en som definierades på backenden.
+    - `to`s värde måste vara unik
 
 ## Redigera API-specifikation
 Redigera specifikationsfilen du vill ändra och gör en PR. Specifikationsfilerna ligger under `server/specifications`.
