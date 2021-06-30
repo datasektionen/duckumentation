@@ -2,7 +2,10 @@ openapi: 3.0.0
 servers: 
   - url: https://nallen.datasektionen.se
 info:
-  description: This is the API spec for the backend of the nAllen application created for the reception of new students at the Computer Science and Engineering programme of the Royal Institute of Technology in Stockholm, Sweden.
+  description: |
+    This is the API spec for the backend of the nAllen application created for the reception of new students at the Computer Science and Engineering programme of the Royal Institute of Technology in Stockholm, Sweden.
+
+    Original version written by Gábor Nagy
   version: 1.1.0
   title: nAllen API
   contact:

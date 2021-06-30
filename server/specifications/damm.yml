@@ -9,10 +9,15 @@ info:
     API-specifikation för damm, Konglig Datasektionens historiesystem.
 
     Auktorisera med token du får från login.
+
+    Skriven av Axel Elmarsson
   version: 2.0.0
   title: damm API
   contact:
     email: d-sys@d.kth.se
+externalDocs:
+  url: https://github.com/datasektionen/damm
+  description: Github
 tags:
   - name: Misc
     description: Miscellaneous endpoints
@@ -161,9 +166,9 @@ paths:
             schema: 
               type: object
               required:
-                - patchId
+                - id
               properties:
-                patchId:
+                id:
                   type: integer
                 name:
                   type: string
@@ -430,13 +435,20 @@ paths:
         '401':
           description: Unauthorized
 
-  /api/files/upload/patch-image:
+  /api/files/upload/image:
     post:
       tags:
         - Files
-      summary: upload an image to AWS S3
+      summary: upload an image to a patch or artefact to AWS S3
       description: |
-        Uploads the image to AWS S3. 
+        Uploads the image to AWS S3. The path qury parameter (folder) is where the image will be saved. It must not end with "/".
+      parameters:
+        - in: query
+          name: path
+          schema:
+            type: string
+            description: The path (folder) where the image will be saved on S3. Must not end with "/".
+            example: patches
       requestBody:
         content:
           multipart/form-data:
@@ -471,23 +483,27 @@ paths:
                           type: string
         '401':
           description: Unauthorized
-  /api/files/attach/img-to-patch:
+  /api/files/attach/img-to:
     post:
       tags:
         - Files
-      summary: attach images to a patch
+      summary: attach images to a specified type (patch or an artefact)
       description: |
-        Attach image urls (S3 images) to a patch. Replaces the current images of a patch. NOTE: does not remove the files from S3
+        Attach image urls (S3 images) to a patch or artefact. Replaces the current images of a patch.
+
+        Is designed to be called after /api/patches/create or /api/artefacts/create to attach the image to the patch/artefact. It is not designed
+        to replace images, it will not remove previous images from S3.
       requestBody:
         content:
           application/json:
             schema:
               type: object
               required:
-                - patchId
+                - id
                 - images
+                - type
               properties:
-                patchId:
+                id:
                   type: integer
                 images:
                   type: array
@@ -495,6 +511,11 @@ paths:
                     type: string
                     format: hostname
                     example: https://datasektionen.se/static/media/skold.21209560.svg
+                type:
+                  type: string
+                  enum:
+                  - patch
+                  - artefact
       responses:
         '200':
           description: Images were attached and replaced the previous ones.
@@ -508,13 +529,25 @@ paths:
                     example: 200
         '401':
           description: Unauthorized
-  /api/files/upload/patch-file:
+  /api/files/upload/file:
     post:
       tags:
         - Files
       summary: upload a file to S3
       description: |
-        Uploads the image to AWS S3.
+        Uploads the file to AWS S3. The path qury parameter (folder) is where the file will be saved. It must not end with "/".
+
+        Note that files attached to patches can only be seen by admins (prylis and admin rights in pls), while files attached to
+        artefacts can be seen by everyone. This is controlled by AWS S3 bucket policies in AWS. Specifically, files in the folders "artefacts" 
+        "artefact-files" aswell as "patches" are open to the public, while the folder "patch-files" is private. Technically you can therefore
+        upload a file to a patch that is public, although not from the frontend client.
+      parameters:
+        - in: query
+          name: path
+          schema:
+            type: string
+            description: The path (folder) where the file will be saved on S3. Must not end with "/".
+            example: patch-files
       requestBody:
         content:
           multipart/form-data:
@@ -549,28 +582,34 @@ paths:
                           type: string
         '401':
           description: Unauthorized
-  /api/files/attach/file-to-patch:
+  /api/files/attach/file-to:
     post:
       tags:
         - Files
-      summary: attach a file to a patch
+      summary: attach a file to a type (patch or artefact)
       description: |
-        Attach a file url (S3 files) to a patch. Pushes to the files array of the Patch.
+        Attach a file url (S3 files) to a specified type, either artefact or patch. Pushes to the files array of the Patch/Artefact.
       requestBody:
         content:
           application/json:
             schema:
               type: object
               required:
-                - patchId
+                - id
                 - file
+                - type
               properties:
-                patchId:
+                id:
                   type: integer
                 file:
                   type: string
                   format: hostname
                   example: https://dsekt-assets.s3.amazonaws.com/protokoll/glogg_sm17
+                type:
+                  type: string
+                  enum:
+                    - patch
+                    - artefact
       responses:
         '200':
           description: File was attached.
@@ -617,7 +656,7 @@ paths:
           schema:
             type: string
         - in: query
-          name: patchId
+          name: id
           required: true
           schema:
             type: integer

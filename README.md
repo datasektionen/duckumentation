@@ -16,7 +16,6 @@ För att lägga till en API-specifikation måste ändringar göras både i front
         ```
         **JSON**:
         ```js
-        const name = JSON.parse(fs.readFileSync("./specifications/name.json"))
         const name = JSON.parse(fs.readFileSync(path.resolve(__dirname + "/specifications/name.json")))
         app.get("/api/apipath", (req, res) => res.json(name))
         ```
