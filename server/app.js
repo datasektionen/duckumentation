@@ -25,6 +25,9 @@ app.get("/api/nallen", (req, res) => res.send(nallen.toString()))
 const damm = fs.readFileSync(path.resolve(__dirname + "/specifications/damm.yml"))
 app.get("/api/damm", (req, res) => res.send(damm.toString()))
 
+const dfunkt = fs.readFileSync(path.resolve(__dirname + "/specifications/dfunkt.yml"))
+app.get("/api/dfunkt", (req, res) => res.send(dfunkt.toString()))
+
 const spam2 = ""
 app.get("/api/spam2", (req, res) => res.send(spam2))
 

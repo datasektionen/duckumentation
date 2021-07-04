@@ -20,6 +20,11 @@ const App = () => {
             api: "/api/duckumentation",
         },
         {
+            label: "dfunkt",
+            to: "/dfunkt",
+            api: "/api/dfunkt",
+        },
+        {
             label: "nAllen",
             to: "/nallen",
             api: "/api/nallen",

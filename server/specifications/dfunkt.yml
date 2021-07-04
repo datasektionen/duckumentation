@@ -1,0 +1,448 @@
+openapi: 3.0.0
+servers:
+  - url: https://dfunkt.datasektionen.se
+    description: Production server
+  - url: http://localhost:8080
+    description: Local development
+info:
+  description: |
+    API-specifikation för dfunkt. Denna specifikation listar inte POST/DELETE-endpoints då de returnerar HTML-sidor alternativt redirectar.
+
+    Auktorisera med token du får från login.
+  version: 1.0.0
+  title: dfunkt API
+  contact:
+    email: d-sys@d.kth.se
+externalDocs:
+  url: https://github.com/datasektionen/dfunkt
+  description: Github
+security: 
+  - BearerAuth: []
+paths:
+  /api/roles:
+    get:
+      tags:
+        - Roles
+      summary: get all role types
+      description: |
+        Returns all role types that exist.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+  /api/role/{identifier}:
+    get:
+      tags:
+        - Roles
+      summary: get role by identifier
+      description: |
+        Returns the role with provided identifier. Response also includes all mandates of the role.
+      parameters:
+        - in: path
+          name: identifier
+          required: true
+          schema:
+            type: string
+          example: vordf
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleWithMandates'
+        '404':
+          description: Role not found!
+  /api/role/id/{id}:
+    get:
+      tags:
+        - Roles
+      summary: get role by id
+      description: |
+        Returns the role with provided id. Response also includes all mandates of the role.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleWithMandates'
+        '404':
+          description: Role not found!
+  /api/role/{identifier}/current:
+    get:
+      tags:
+        - Roles
+      summary: get current mandate of a role
+      description: |
+        Returns the role with provided identifier and the current mandate of the role.
+      parameters:
+        - in: path
+          name: identifier
+          required: true
+          schema:
+            type: string
+          example: vordf
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleWithMandates'
+        '404':
+          description: Role not found!
+  /api/role/id/{id}/current:
+    get:
+      tags:
+        - Roles
+      summary: get current mandate of a role
+      description: |
+        Returns the role with provided id and the current mandate of the role.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleWithMandates'
+        '404':
+          description: Role not found!
+  /api/roles/type/{groupIdentifier}/all:
+    get:
+      tags:
+        - Roles
+      summary: get roles by group
+      description: |
+        Returns all roles in specified group and all their mandates.
+      parameters:
+        - in: path
+          name: groupIdentifier
+          required: true
+          schema:
+            type: string
+          example: drek
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleWithMandatesArray'
+  /api/roles/type/{groupIdentifier}/all/current:
+    get:
+      tags:
+        - Roles
+      summary: get roles by group and their current mandates
+      description: |
+        Returns all roles in specified group and their current mandates.
+      parameters:
+        - in: path
+          name: groupIdentifier
+          required: true
+          schema:
+            type: string
+          example: drek
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleWithMandatesArray'
+  /api/roles/all:
+    get:
+      tags:
+        - Roles
+      summary: get all roles and their history
+      description: |
+        Returns all roles and all their mandates.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleWithMandatesArray'
+  /api/roles/all/current:
+    get:
+      tags:
+        - Roles
+      summary: get all roles and their current mandate
+      description: |
+        Returns all roles and their current mandate
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleWithMandatesArray'
+# USERS
+  /api/users:
+    get:
+      tags:
+        - Users
+      summary: get all users
+      description: |
+        Returns all users who have had a mandate
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserArray'
+  /api/user/kthid/{kthid}:
+    get:
+      tags:
+        - Users
+      summary: get a user and all their mandates
+      description: |
+        Returns the specified user and all their mandates
+      parameters:
+        - in: path
+          name: kthid
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserWithMandates'
+        '404':
+          description: does not exist
+  /api/user/kthid/{kthid}/current:
+    get:
+      tags:
+        - Users
+      summary: get a user and their current mandates
+      description: |
+        Returns the specified user and their current mandates
+      parameters:
+        - in: path
+          name: kthid
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserMandatesFull'
+        '404':
+          description: does not exist
+  /api/user/ugkthid/{ugkthid}:
+    get:
+      tags:
+        - Users
+      summary: get a user and all their mandates
+      description: |
+        Returns the specified user and all their mandates
+      parameters:
+        - in: path
+          name: ugkthid
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserWithMandates'
+        '404':
+          description: does not exist
+  /api/user/ugkthid/{ugkthid}/current:
+    get:
+      tags:
+        - Users
+      summary: get a user and their current mandates
+      description: |
+        Returns the specified user and their current mandates
+      parameters:
+        - in: path
+          name: ugkthid
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserMandatesFull'
+        '404':
+          description: does not exist
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        identifier:
+          type: string
+        email:
+          type: string
+          format: email
+        active:
+          type: boolean
+        Group:
+          $ref: '#/components/schemas/Group'
+    RoleWithMandates:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        identifier:
+          type: string
+        email:
+          type: string
+          format: email
+        active:
+          type: boolean
+        Group:
+          $ref: '#/components/schemas/Group'
+        mandates:
+          type: array
+          items:
+            type: object
+            properties:
+              start:
+                type: string
+                format: date-time
+              end:
+                type: string
+                format: date-time
+              User:
+                $ref: '#/components/schemas/User'
+    RoleWithMandatesArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/RoleWithMandates'
+    Group:
+      type: object
+      properties:
+        name:
+          type: string
+        identifier:
+          type: string
+    User:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        kthid:
+          type: string
+        ugkthid:
+          type: string
+    UserArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/User'
+    UserDetailed:
+      type: object
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        kthid:
+          type: string
+        ugkthid:
+          type: string
+        admin:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    UserWithMandates:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/UserDetailed'
+        mandates:
+          type: array
+          items:
+            type: object
+            properties:
+              start:
+                type: string
+                format: date-time
+              end:
+                type: string
+                format: date-time
+              Role:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  identifier:
+                    type: string
+                  email:
+                    type: string
+                    format: email
+    UserMandatesFull:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/UserDetailed'
+        mandates:
+          type: object
+          properties:
+            start:
+              type: string
+              format: date-time
+            end:
+              type: string
+              format: date-time
+            Role:
+              $ref: '#/components/schemas/Role'
