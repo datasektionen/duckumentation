@@ -28,8 +28,8 @@ app.get("/api/damm", (req, res) => res.send(damm.toString()))
 const dfunkt = fs.readFileSync(path.resolve(__dirname + "/specifications/dfunkt.yml"))
 app.get("/api/dfunkt", (req, res) => res.send(dfunkt.toString()))
 
-const spam2 = ""
-app.get("/api/spam2", (req, res) => res.send(spam2))
+const spam2 = fs.readFileSync(path.resolve(__dirname + "/specifications/spam2.yml"))
+app.get("/api/spam2", (req, res) => res.send(spam2.toString()))
 
 // Insert new API endpoints above this line
 app.get("/api/*", (req, res) => res.send("Invalid API path"))
