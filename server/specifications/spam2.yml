@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   version: 1.0.0
   title: spam
-  description: " A system for sending emails located at [spam.datasektionen.se](https://spam2.datasektionen.se).
+  description: " A system for sending emails located at [spam2.datasektionen.se](https://spam2.datasektionen.se).
     To send emails you need an API key which can be generated through the permission
     system [pls](https://pls.datasektionen.se). The key needs to have the permission
     `send` in the `spam` system. "
