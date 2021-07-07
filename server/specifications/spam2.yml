@@ -1,0 +1,203 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: spam
+  description: " A system for sending emails located at [spam2.datasektionen.se](https://spam2.datasektionen.se).
+    To send emails you need an API key which can be generated through the permission
+    system [pls](https://pls.datasektionen.se). The key needs to have the permission
+    `send` in the `spam` system. "
+externalDocs:
+  description: GitHub
+  url: https://github.com/oskstr/spam
+tags:
+- name: spam
+  description: "[https://www.youtube.com/watch?v=_bW4vEo1F4E](https://www.youtube.com/watch?v=_bW4vEo1F4E)"
+  externalDocs:
+    description: GitHub
+    url: https://github.com/datasektionen/spam2
+servers:
+- url: https://spam2.datasektionen.se/api
+  description: Production Server
+- url: https://az9k9s68yc.execute-api.eu-west-1.amazonaws.com/dev/api
+  description: Dev Server
+- url: http://localhost:3000/local/api
+  description: Local Server (send requests to your own machine)
+paths:
+  "/ping":
+    get:
+      tags:
+      - spam
+      summary: Check if service is up
+      description: Should return a life sign if everything is alright.
+      operationId: ping
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 'I''m alive
+
+                  '
+  "/sendmail":
+    post:
+      tags:
+      - spam
+      summary: Send an email
+      description: Generates an email from Markdown and a template and sends it to
+        people.
+      operationId: sendMail
+      requestBody:
+        description: An email request object
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/EmailRequest"
+            examples:
+              simple:
+                summary: Simple Example
+                value:
+                  from: no-reply@datasektionen.se
+                  to: foo@example.com
+                  subject: Simple Example Title
+                  content: Hello World!
+              complex:
+                summary: Complex Example
+                value:
+                  from:
+                    name: Datasektionen
+                    address: no-reply@datasektionen.se
+                  to:
+                  - name: Foo Example
+                    address: foo@example.com
+                  - name: Bar Example
+                    address: bar@example.com
+                  cc:
+                  - baz@example.com
+                  bcc: d-sys@d.kth.se
+                  subject: Complex Example Title
+                  content: |-
+                    # Menu
+                     - Egg, bacon and spam
+                     - Spam, bacon, sausage and spam
+                  template: default
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  envelope:
+                    from: no-reply@datasektionen.se
+                    to:
+                    - foo@example.com
+                  messageId: "<3089feff-df34-2312-67f5-ad39acaf5bc7@datasektionen.se>"
+                  message: '{"from":{"address":"no-reply@...'
+                  originalMessage:
+                    from: no-reply@datasektionen.se
+                    replyTo: no-reply@datasektionen.se
+                    subject: Simple Example Title
+                    to: foo@example.com
+                    attachments: []
+                    html: |-
+                      <div>
+                          <div class="outer" style="background-color:#f7f7f7...
+                    text: 'Hello World!
+
+                      '
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - ApiKeyAuth: []
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: api_key
+  schemas:
+    Address:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+          format: email
+      required:
+      - name
+      - address
+    Email:
+      oneOf:
+      - type: string
+        format: email
+      - "$ref": "#/components/schemas/Address"
+    Recipients:
+      oneOf:
+      - "$ref": "#/components/schemas/Email"
+      - type: array
+        items:
+          "$ref": "#/components/schemas/Email"
+    Verified:
+      anyOf:
+      - enum:
+        - valberedning@d.kth.se
+        - titel@d.kth.se
+      - pattern: "^.+@datasektionen.se$"
+    VerifiedAddress:
+      oneOf:
+      - allOf:
+        - type: string
+          format: email
+        - "$ref": "#/components/schemas/Verified"
+      - allOf:
+        - "$ref": "#/components/schemas/Address"
+        - properties:
+            address:
+              "$ref": "#/components/schemas/Verified"
+    EmailRequest:
+      type: object
+      oneOf:
+      - required:
+        - to
+        - from
+        - subject
+        - html
+      - required:
+        - to
+        - from
+        - subject
+        - content
+      properties:
+        to:
+          "$ref": "#/components/schemas/Recipients"
+        cc:
+          "$ref": "#/components/schemas/Recipients"
+        bcc:
+          "$ref": "#/components/schemas/Recipients"
+        from:
+          "$ref": "#/components/schemas/VerifiedAddress"
+        replyTo:
+          "$ref": "#/components/schemas/Email"
+        subject:
+          type: string
+          minLength: 1
+        html:
+          type: string
+          minLength: 1
+        content:
+          type: string
+          minLength: 1
+        template:
+          type: string
+          enum:
+          - default
+          - empty
