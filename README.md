@@ -34,7 +34,7 @@ Redigera specifikationsfilen du vill ändra och gör en PR. Specifikationsfilern
 
 # Miljövariabler (environment variables)
 ### Klient
-Redigera `.env-development`-fil under `client/` för att definiera miljövariabler.
+Redigera `.env.development`-filen under `client/` för att definiera miljövariabler.
 | Namn | Standardvärde | Beskrivning |
 |----- | ------------- | ----------- |
 | REACT_APP_BASE_URL | http://localhost:5000 | Path till backenden |
