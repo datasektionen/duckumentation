@@ -1,0 +1,651 @@
+openapi: 3.0.0
+servers:
+  - url: https://pls.datasektionen.se
+    description: Production server
+  - url: http://localhost:5000
+    description: Local development
+info:
+  description: |
+    pls - Datasektionens system för att hantera behörigheter.
+
+    Behörigheter kan vara kopplade till API-token, funktionärsposter eller individuella medlemmar.
+
+    Auktorisera med token du får från login.
+  version: 1.0.0
+  title: pls
+  contact:
+    email: d-sys@d.kth.se
+externalDocs:
+  url: https://github.com/datasektionen/pls
+  description: Github
+paths:
+  /api/group:
+    get:
+      tags:
+        - Group
+      summary: Get all groups
+      description: Returns a list of all groups
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example:
+                  - pls
+                  - spam
+                  - cashflow
+  /api/group/{group}:
+    get:
+      tags:
+        - Group
+      summary: Get information about a group
+      description: Returns information about a group's permissions, tokens, memberships, and mandates.
+      parameters:
+        - in: path
+          name: group
+          required: true
+          schema:
+            type: string
+          description: The group id
+          example: cashflow.firmatecknare
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  type: string
+                example:
+                  tokens:
+                    - tag: tag-name
+                      accessed: "2021-10-30T14:00:35.627839Z"
+                  permissions:
+                    - accounting-Scala
+                    - attest-Scala
+                    - pay
+                  memberships:
+                    - uid: juland
+                      expiry: '2030-12-31'
+                  mandates:
+                    - kassor@d.kth.se
+                    - ordf@d.kth.se
+                    - vkassor@d.kth.se
+    post:
+      tags:
+        - Group
+      summary: Add a new group
+      parameters:
+        - in: path
+          name: group
+          required: true
+          schema:
+            type: string
+          description: The group id
+          example: cashflow.firmatecknare
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  type: string
+                example:
+                  name: cashflow.firmatecknare
+    delete:
+      tags:
+        - Group
+      summary: Add a new group
+      parameters:
+        - in: path
+          name: group
+          required: true
+          schema:
+            type: string
+          description: The group id
+          example: cashflow.firmatecknare
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example:
+                  "Removed 1 row(s)"
+  /api/group/{group}/{permission}:
+    get:
+      tags:
+        - Group
+      summary: Checks if permission exist in group
+      parameters:
+        - in: path
+          name: group
+          required: true
+          schema:
+            type: string
+          description: The group id
+          example: cashflow.firmatecknare
+        - in: path
+          name: permission
+          required: true
+          schema:
+            type: string
+          description: Permission id
+          example: accounting-Scala
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+                example:
+                  true
+    post:
+      tags:
+        - Group
+      summary: Add a new permission to a group
+      parameters:
+        - in: path
+          name: group
+          required: true
+          schema:
+            type: string
+          description: The group id
+          example: cashflow.firmatecknare
+        - in: path
+          name: permission
+          required: true
+          schema:
+            type: string
+          description: Permission id
+          example: accounting-Scala
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  type: string
+                example:
+                  name: accounting-Scala
+    delete:
+      tags:
+        - Group
+      summary: Delete a permission from a group
+      parameters:
+        - in: path
+          name: group
+          required: true
+          schema:
+            type: string
+          description: The group id
+          example: cashflow.firmatecknare
+        - in: path
+          name: permission
+          required: true
+          schema:
+            type: string
+          description: Permission id
+          example: accounting-Scala
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example:
+                  "Removed 1 row(s)"
+  /api/user/{uid}:
+    get:
+      tags:
+        - User
+      summary: Get permissions of a user
+      description: Get permissions of a user grouped by system
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: User id
+          example: juland
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  yoggi:
+                    - namnder
+                  pls:
+                    - pls
+                  cashflow:
+                    - accounting-Scala
+                    - confirm
+                    - pay
+  /api/user/{uid}/{system}:
+    get:
+      tags:
+        - User
+      summary: Get permissions of a user
+      description: Get permissions of a user by system
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: User id
+          example: juland
+        - in: path
+          name: system
+          required: true
+          schema:
+            type: string
+          description: System id
+          example: cashflow
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example:
+                  - accounting-Scala
+                  - confirm
+                  - pay
+  /api/user/{uid}/{system}/{permission}:
+    get:
+      tags:
+        - User
+      summary: Checks if a user has a permission in a system
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: User id
+          example: juland
+        - in: path
+          name: system
+          required: true
+          schema:
+            type: string
+          description: System id
+          example: cashflow
+        - in: path
+          name: permission
+          required: true
+          schema:
+            type: string
+          description: Permission id
+          example: accounting-Scala
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+                example:
+                  true
+  /api/user/{uid}/{group}:
+    post:
+      tags:
+        - User
+      summary: Add a user to a group
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: User id
+          example: juland
+        - in: path
+          name: group
+          required: true
+          schema:
+            type: string
+          description: Group id
+          example: cashflow
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                expiry:
+                  type: string
+                  example: "2022-04-20"
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  uid: juland
+                  expiry: '2022-04-20'
+    delete:
+      tags:
+        - User
+      summary: Remove a user from a group
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: User id
+          example: juland
+        - in: path
+          name: group
+          required: true
+          schema:
+            type: string
+          description: Group id
+          example: cashflow
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example:
+                  "Removed 1 row(s)"
+
+  /api/token/{token}:
+    get:
+      tags:
+        - Token
+      summary: Get permissions of a token
+      description: Get permissions of a token grouped by system
+      parameters:
+        - in: path
+          name: token
+          required: true
+          schema:
+            type: string
+          description: Token id
+          example: tag-name-TCQDzG9MeGEm-sYkjsIH-X7V9c7Mnoo0-o23_5VMXB8
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  yoggi:
+                    - namnder
+                  pls:
+                    - pls
+                  cashflow:
+                    - accounting-Scala
+                    - confirm
+                    - pay
+  /api/token/{token}/{system}:
+    get:
+      tags:
+        - Token
+      summary: Get permissions of a token
+      description: Get permissions of a token by system
+      parameters:
+        - in: path
+          name: token
+          required: true
+          schema:
+            type: string
+          description: Token id
+          example: tag-name-TCQDzG9MeGEm-sYkjsIH-X7V9c7Mnoo0-o23_5VMXB8
+        - in: path
+          name: system
+          required: true
+          schema:
+            type: string
+          description: System id
+          example: cashflow
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example:
+                  - accounting-Scala
+                  - confirm
+                  - pay
+  /api/token/{token}/{system}/{permission}:
+    get:
+      tags:
+        - Token
+      summary: Checks if a token has a permission in a system
+      parameters:
+        - in: path
+          name: token
+          required: true
+          schema:
+            type: string
+          description: Token id
+          example: tag-name-TCQDzG9MeGEm-sYkjsIH-X7V9c7Mnoo0-o23_5VMXB8
+        - in: path
+          name: system
+          required: true
+          schema:
+            type: string
+          description: System id
+          example: cashflow
+        - in: path
+          name: permission
+          required: true
+          schema:
+            type: string
+          description: Permission id
+          example: accounting-Scala
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+                example:
+                  true
+  /api/token/{tag}/{group}:
+    post:
+      tags:
+        - Token
+      summary: Add a tag to a group
+      parameters:
+        - in: path
+          name: tag
+          required: true
+          schema:
+            type: string
+          description: Tag id
+          example: tag-name
+        - in: path
+          name: group
+          required: true
+          schema:
+            type: string
+          description: Group id
+          example: cashflow
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  token: tag-name-TCQDzG9MeGEm-sYkjsIH-X7V9c7Mnoo0-o23_5VMXB8
+                  tag: tag-name
+                  accessed: null
+
+    delete:
+      tags:
+        - Token
+      summary: Remove a tag from a group
+      parameters:
+        - in: path
+          name: tag
+          required: true
+          schema:
+            type: string
+          description: Tag id
+          example: tag-name
+        - in: path
+          name: group
+          required: true
+          schema:
+            type: string
+          description: Group id
+          example: cashflow
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example:
+                  "Removed 1 row(s)"
+  /api/mandate/{mandate}:
+    get:
+      tags:
+        - Mandate
+      summary: Get permissions of a mandate
+      description: Get permissions of a mandate, like Kassör
+      parameters:
+        - in: path
+          name: mandate
+          required: true
+          schema:
+            type: string
+          description: Mandate id
+          example: kassor@d.kth.se
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                example:
+                  - cashflow.firmatecknare
+                  - verksamt.drek
+                  - dfunkt
+  /api/mandate/{mandate}/{group}:
+    get:
+      tags:
+        - Mandate
+      summary: Checks if mandate belongs to a group
+      parameters:
+        - in: path
+          name: mandate
+          required: true
+          schema:
+            type: string
+          description: Mandate id
+          example: kassor@d.kth.se
+        - in: path
+          name: group
+          required: true
+          schema:
+            type: string
+          description: Group id
+          example: cashflow.firmatecknare
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+                example:
+                  true
+    post:
+      tags:
+        - Mandate
+      summary: Adds a mandate to a group
+      parameters:
+        - in: path
+          name: mandate
+          required: true
+          schema:
+            type: string
+          description: Mandate id
+          example: kassor@d.kth.se
+        - in: path
+          name: group
+          required: true
+          schema:
+            type: string
+          description: Group id
+          example: cashflow.firmatecknare
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  name: kassor@d.kth.se
+    delete:
+      tags:
+        - Mandate
+      summary: Removes a mandate from a group
+      parameters:
+        - in: path
+          name: mandate
+          required: true
+          schema:
+            type: string
+          description: Mandate id
+          example: kassor@d.kth.se
+        - in: path
+          name: group
+          required: true
+          schema:
+            type: string
+          description: Group id
+          example: cashflow.firmatecknare
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example:
+                  "Removed 1 row(s)"

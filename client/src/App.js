@@ -39,6 +39,11 @@ const App = () => {
             to: "/spam2",
             api: "/api/spam2",
         },
+        {
+            label: "pls",
+            to: "/pls",
+            api: "/api/pls"
+        },
     ]
 
     return (

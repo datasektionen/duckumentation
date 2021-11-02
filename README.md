@@ -7,18 +7,6 @@ För att lägga till en API-specifikation måste ändringar göras både i front
 
 ### Backend
 1. Lägg till OpenAPI-specifikationsfilen i `server/specifications`.
-2. I `server/app.js`, gör fäljande:
-    - Ladda in filen och servera på en endpoint:
-        **YML**:
-        ```js
-        const name = fs.readFileSync(path.resolve(__dirname + "/specifications/name.yml"))
-        app.get("/api/apipath", (req, res) => res.send(name.toString()))
-        ```
-        **JSON**:
-        ```js
-        const name = JSON.parse(fs.readFileSync(path.resolve(__dirname + "/specifications/name.json")))
-        app.get("/api/apipath", (req, res) => res.json(name))
-        ```
 
 ### Frontend
 I `client/src/App.js`, gör fäljande:
@@ -34,7 +22,7 @@ Redigera specifikationsfilen du vill ändra och gör en PR. Specifikationsfilern
 
 # Miljövariabler (environment variables)
 ### Klient
-Redigera `.env-development`-fil under `client/` för att definiera miljövariabler.
+Redigera `.env.development`-filen under `client/` för att definiera miljövariabler.
 | Namn | Standardvärde | Beskrivning |
 |----- | ------------- | ----------- |
 | REACT_APP_BASE_URL | http://localhost:5000 | Path till backenden |
