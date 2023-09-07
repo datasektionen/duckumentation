@@ -61,7 +61,7 @@ const App = () => {
                     <div id="content">
                         <p>
                             På denna sida finns Konglig Datasektionens API-specifikationer (de system som någon orkat skriva en OpenAPI-specifikation för). Saknar du något system på denna sida? Vill du bidra? Skriv en specifikation för ett nuvarande system.
-                            Kontakta <a href="mailto:d-sys@d.kth.se">Systemansvarig</a> eller <a href="mailto:ior@d.kth.se">IOR</a> om du är intresserad.
+                            Kontakta <a href="mailto:d-sys@datasektionen.se">Systemansvarig</a> eller <a href="mailto:ior@datasektionen.se">IOR</a> om du är intresserad.
                         </p>
                         <ul>
                             {links.map((l, i) =>
