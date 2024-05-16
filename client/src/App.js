@@ -25,11 +25,6 @@ const App = () => {
             api: "/api/dfunkt",
         },
         {
-            label: "nAllen",
-            to: "/nallen",
-            api: "/api/nallen",
-        },
-        {
             label: "damm",
             to: "/damm",
             api: "/api/damm",
