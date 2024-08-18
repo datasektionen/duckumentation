@@ -1,3 +1,5 @@
+Dokumentation är ju bra, men den kommer ju (beviserligen, enligt definition, och beviset lämnas som en uppgift till läsaren) inte uppdateras om den ligger i ett annat repo :^)
+
 # Duckumentation :duck:
 Konglig Datasektionens API-specifikationer
 
